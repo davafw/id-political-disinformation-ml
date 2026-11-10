@@ -2,7 +2,7 @@
 ## INFORMASI PROYEK
 
 **Judul Proyek:**  
-[Klasifikasi Teks Berita Provokatif (Clickbait) dan Disinformasi Politik Viral di Indonesia Menggunakan Pendekatan Machine Learning dan Deep Learning]
+Klasifikasi Teks Berita Provokatif (Clickbait) dan Disinformasi Politik Viral di Indonesia Menggunakan Pendekatan Machine Learning dan Deep Learning
 
 **Nama Mahasiswa:** 
 1. Dava Febri Wardana  
@@ -12,7 +12,7 @@
 2. 244311046
 **Program Studi:** D4 Teknologi Rekayasa Perangkat Lunak
 **Mata Kuliah:** Data Science
-**Dosen Pengampu:** Gus Nanang Syaifuddiin, S.Kom., M.Kom. 
+**Dosen Pengampu:** Gus Nanang Syaifuddiin S.KOM M.KOM
 **Tahun Akademik:** 2026/2027 (Semester 5)  
 **Link GitHub Repository:** https://github.com/davafw/id-political-disinformation-ml.git 
 **Link Video Pembahasan:** [URL Video (YouTube/Drive)]  

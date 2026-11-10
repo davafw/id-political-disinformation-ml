@@ -1,7 +1,7 @@
 ---
 ## INFORMASI PROYEK
 
-**Judul Proyek:**  
+**Judul Proyek: **  
 Klasifikasi Teks Berita Provokatif (Clickbait) dan Disinformasi Politik Viral di Indonesia Menggunakan Pendekatan Machine Learning dan Deep Learning
 
 **Nama Mahasiswa:** 

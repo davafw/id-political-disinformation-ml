@@ -1,17 +1,17 @@
 ---
 ## INFORMASI PROYEK
 
-** Judul Proyek: **  Klasifikasi Teks Berita Provokatif (Clickbait) dan Disinformasi Politik Viral di Indonesia Menggunakan Pendekatan Machine Learning dan Deep Learning 
-** Nama Mahasiswa: ** 1. Dava Febri Wardana 2. Kunni Sofa Rahmayani
-** NIM: ** 1. 244311039  2. 244311046
+** Judul Proyek: **  Klasifikasi Teks Berita Provokatif (Clickbait) dan Disinformasi Politik Viral di Indonesia Menggunakan Pendekatan Machine Learning dan Deep Learning
+** Nama Mahasiswa: ** 1. Dava Febri Wardana  2. Kunni Sofa Rahmayani
+** NIM: ** 1. 244311039 2. 244311046
 ** Program Studi: ** D4 Teknologi Rekayasa Perangkat Lunak
 ** Mata Kuliah: ** Data Science
 ** Dosen Pengampu: ** Gus Nanang Syaifuddiin S.KOM M.KOM
 ** Tahun Akademik: ** 2026/2027 (Semester 5)  
 ** Link GitHub Repository: ** https://github.com/davafw/id-political-disinformation-ml.git 
 ** Link Video Pembahasan: ** [URL Video (YouTube/Drive)]  
-** SDG yang Dipilih: ** SDG 16 – Perdamaian, Keadilan, dan Kelembagaan yang Tangguh  
-** Target SDG yang Relevan: ** Target 16.10 – Menjamin akses publik terhadap informasi dan melindungi kebebasan mendasar, sesuai dengan peraturan nasional dan kesepakatan internasional
+** SDG yang Dipilih: ** SDG 16 – Perdamaian Keadilan dan Kelembagaan yang Tangguh  
+** Target SDG yang Relevan: ** Target 16.10 – Menjamin akses publik terhadap informasi dan melindungi kebebasan mendasar sesuai dengan peraturan nasional dan kesepakatan internasional
 
 ---
 

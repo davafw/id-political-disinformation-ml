@@ -64,17 +64,15 @@ Pada proyek ini, mahasiswa diharapkan dapat:
 ## 2. PROJECT OVERVIEW  **[L]**
 
 ### 2.1 Latar Belakang
-**Isi bagian ini dengan:**
-- Mengapa proyek ini penting?
-- Permasalahan umum pada domain terkait (misal: kesehatan, pendidikan, keuangan, pertanian, NLP, computer vision, dll.)
-- Manfaat proyek untuk pengguna, bisnis, atau penelitian
-- Studi literatur atau referensi ilmiah (minimal 1–2 sumber wajib)
-- Keterkaitan masalah dengan SDGs yang dipilih (dijabarkan di Bab 2.2)
+Perkembangan media online dan media sosial membuat informasi politik menyebar sangat cepat di Indonesia. Di sisi lain, isu politik yang viral dan berlarut-larut, seperti polemik keaslian ijazah tokoh publik atau perdebatan antar-tokoh di ruang publik, sering dimanfaatkan akun atau situs tidak bertanggung jawab. Mereka membuat judul dan narasi yang provokatif (*clickbait*) atau menyesatkan demi memancing emosi dan interaksi warganet. Akibatnya, pembaca kesulitan membedakan berita jurnalistik yang informatif dari teks yang bersifat provokatif atau disinformasi, sementara pemeriksaan manual tidak mampu mengimbangi volume dan kecepatan penyebarannya.
 
-**Contoh referensi (berformat APA/IEEE):**
-> Goodfellow, I., Bengio, Y., & Courville, A. (2016). *Deep Learning*. MIT Press.
+Pada domain *Natural Language Processing* (NLP), permasalahan ini dapat dirumuskan sebagai klasifikasi teks, yaitu mengenali pola bahasa yang membedakan kedua jenis teks tersebut. Tantangannya antara lain bahasa Indonesia yang informal, label yang rawan subjektif karena kebenaran pada konflik politik sulit diverifikasi secara mutlak, dan risiko model menghafal nama tokoh alih-alih pola kalimat provokatif. Penelitian NLP berbahasa Indonesia sudah berkembang, misalnya klasifikasi emosi pada data Twitter Indonesia (Saputri et al., 2018) dan penyediaan benchmark serta sumber daya pemahaman bahasa Indonesia melalui IndoNLU (Wilie et al., 2020). Keduanya menunjukkan bahwa teks berbahasa Indonesia dapat dimodelkan dengan pendekatan *machine learning* dan *deep learning*.
 
-**[Jelaskan konteks dan latar belakang proyek]**
+Proyek ini membandingkan tiga pendekatan (Logistic Regression, Decision Tree/Random Forest, dan jaringan saraf sederhana dengan *learned embeddings*) untuk mengklasifikasikan teks provokatif dan disinformasi politik. Hasilnya diharapkan bermanfaat sebagai alat bantu penyaringan awal bagi pembaca, pemeriksa fakta, atau moderator konten, serta sebagai bahan studi perbandingan model untuk penelitian selanjutnya. Proyek ini berkaitan dengan SDG 16 Target 16.10 karena membantu publik mengakses informasi yang andal (dijabarkan di Bab 2.2).
+
+**Referensi:**
+- Saputri, M. S., Mahendra, R., & Adriani, M. (2018). Emotion classification on Indonesian Twitter dataset. *Proceedings of the 2018 International Conference on Asian Language Processing (IALP)*, 90–95.
+- Wilie, B., et al. (2020). IndoNLU: Benchmark and resources for evaluating Indonesian natural language understanding. *Proceedings of the 1st Conference of the Asia-Pacific Chapter of the Association for Computational Linguistics and the 10th International Joint Conference on Natural Language Processing (AACL-IJCNLP)*, 843–857.
 
 ### 2.2 Keterkaitan dengan SDGs (WAJIB)
 
@@ -94,7 +92,7 @@ Ide proyek **berasal dari mahasiswa** dan harus selaras dengan **salah satu** da
 ### 2.3 Ringkasan Alur Lifecycle Proyek
 Jelaskan dalam 1 paragraf pendek bagaimana proyek Anda melewati tahap L → M → O → P (dan iterasi apa yang direncanakan).
 
-**[Tulis ringkasan alur lifecycle proyek Anda]**
+**Pada tahap **L**, kami merumuskan masalah sebagai klasifikasi biner teks (0 = berita jurnalistik informatif, 1 = provokatif/disinformasi) menggunakan dataset berlabel dari Kaggle, lalu membersihkan dan membagi data tanpa kebocoran informasi ke test set. Pada tahap **M**, kami merancang tiga model: Logistic Regression dengan Bag-of-Words sebagai baseline, Decision Tree/Random Forest sebagai model advanced, dan jaringan saraf sederhana dengan learned embeddings sebagai model deep learning. Pada tahap **O**, model dilatih dengan loss cross-entropy, dilakukan tuning hyperparameter, dan dikontrol overfitting-nya dengan regularisasi serta early stopping. Pada tahap **P**, ketiga model dievaluasi pada test set menggunakan accuracy, precision, dan recall, lalu dibandingkan. Iterasi yang direncanakan: jika hasil evaluasi menunjukkan model terlalu bergantung pada nama tokoh (bukan pola bahasa provokatif), kami kembali ke tahap L dan M untuk menyamarkan nama tokoh pada teks dan menyesuaikan fitur, lalu melatih ulang dan membandingkan metriknya.**
 
 ---
 

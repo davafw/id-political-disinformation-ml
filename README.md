@@ -90,7 +90,6 @@ Ide proyek **berasal dari mahasiswa** dan harus selaras dengan **salah satu** da
 **Sumber ide:** Ide berasal dari isu nasional, yaitu maraknya polemik politik viral di Indonesia yang berlarut-larut, seperti perdebatan keaslian ijazah tokoh publik dan adu argumen antar-tokoh di ruang publik. Isu semacam ini sering dimanfaatkan akun atau situs tidak bertanggung jawab untuk membuat judul dan narasi provokatif demi memancing emosi dan interaksi warganet. Dari pengamatan terhadap fenomena tersebut, kami tertarik membangun model yang dapat mengenali pola bahasa provokatif secara otomatis.
 
 ### 2.3 Ringkasan Alur Lifecycle Proyek
-Jelaskan dalam 1 paragraf pendek bagaimana proyek Anda melewati tahap L → M → O → P (dan iterasi apa yang direncanakan).
 
 **Pada tahap **L**, kami merumuskan masalah sebagai klasifikasi biner teks (0 = berita jurnalistik informatif, 1 = provokatif/disinformasi) menggunakan dataset berlabel dari Kaggle, lalu membersihkan dan membagi data tanpa kebocoran informasi ke test set. Pada tahap **M**, kami merancang tiga model: Logistic Regression dengan Bag-of-Words sebagai baseline, Decision Tree/Random Forest sebagai model advanced, dan jaringan saraf sederhana dengan learned embeddings sebagai model deep learning. Pada tahap **O**, model dilatih dengan loss cross-entropy, dilakukan tuning hyperparameter, dan dikontrol overfitting-nya dengan regularisasi serta early stopping. Pada tahap **P**, ketiga model dievaluasi pada test set menggunakan accuracy, precision, dan recall, lalu dibandingkan. Iterasi yang direncanakan: jika hasil evaluasi menunjukkan model terlalu bergantung pada nama tokoh (bukan pola bahasa provokatif), kami kembali ke tahap L dan M untuk menyamarkan nama tokoh pada teks dan menyesuaikan fitur, lalu melatih ulang dan membandingkan metriknya.**
 
@@ -107,7 +106,10 @@ Tuliskan 2–4 pernyataan masalah yang jelas dan spesifik.
 3. Dataset memiliki noise sehingga perlu preprocessing yang tepat
 4. Dibutuhkan model deep learning yang mampu belajar representasi fitur kompleks
 
-**[Tulis problem statements Anda di sini]**
+**
+1. Volume berita dan unggahan terkait isu politik viral di Indonesia sangat besar dan menyebar cepat, sehingga diperlukan model klasifikasi teks biner otomatis yang mampu membedakan antara berita jurnalistik informatif (`0`) dan teks provokatif/disinformasi (`1`) dengan akurasi, *precision*, serta *recall* yang tinggi[cite: 14, 15, 49].
+2. Teks berita politik mengandung *noise* bahasa informal serta risiko *keyword overfitting* (model menghafal nama tokoh atau institusi tertentu sebagai penanda hoaks), sehingga diperlukan proses *text preprocessing*, penyamaran entitas nama tokoh (*entity masking*), dan pembagian data yang bebas dari *data leakage*[cite: 17, 26, 32, 49].
+3. Representasi fitur sederhana seperti *Bag-of-Words* mengabaikan urutan dan konteks kata dalam kalimat, sehingga diperlukan perbandingan sistematis antara model *baseline* linear, model *advanced* berbasis pohon keputusan (*Decision Tree/Random Forest*), dan model *deep learning* dengan *learned embeddings* untuk menemukan arsitektur dengan generalisasi terbaik[cite: 18, 29, 30, 45, 49].**
 
 ### 3.2 Formulasi Learning Problem (WAJIB)
 
@@ -115,9 +117,9 @@ Rumuskan masalah dalam kerangka *Learning Problem*:
 
 | Komponen | Pertanyaan Panduan | Jawaban Anda |
 |----------|--------------------|--------------|
-| **Target** | Apa yang diprediksi? Jenis tugas (klasifikasi biner/multikelas, regresi, forecasting, clustering, dll.)? | [ ... ] |
-| **Objective** | Apa yang dioptimalkan/diminimalkan secara matematis (misal: cross-entropy, MSE)? Metrik keberhasilan utama? | [ ... ] |
-| **Data** | Sumber, ukuran, jenis, dan asumsi tentang data (i.i.d.? distribusi train vs test?) | [ ... ] |
+| **Target** | Apa yang diprediksi? Jenis tugas (klasifikasi biner/multikelas, regresi, forecasting, clustering, dll.)? | [Supervised Learning – Klasifikasi Biner**[cite: 12, 14]. Memprediksi label kategori diskret $Y \in \{0, 1\}$ pada teks berita/unggahan politik, di mana `0` = berita jurnalistik informatif dan `1` = teks provokatif (*clickbait*) / disinformasi[cite: 9, 14].] |
+| **Objective** | Apa yang dioptimalkan/diminimalkan secara matematis (misal: cross-entropy, MSE)? Metrik keberhasilan utama? | [Saat Pelatihan (Loss Function):** Meminimalkan *Binary Cross-Entropy Loss* untuk mengukur kesalahan prediksi probabilitas model pada setiap sampel[cite: 14, 15].<br>**Saat Penilaian (Metrik Evaluasi):** *Accuracy*, *Precision*, *Recall*, dan *F1-Score* pada *test set* untuk memastikan model tidak hanya akurat secara keseluruhan, tetapi juga seimbang dalam menekan *false positive* (berita sah yang salah dilabeli provokatif) dan *false negative* (disinformasi yang lolos)[cite: 14, 15, 49].] |
+| **Data** | Sumber, ukuran, jenis, dan asumsi tentang data (i.i.d.? distribusi train vs test?) | [*Sumber:** Kaggle (*Indonesian Fact and Hoax Political News Dataset* / *TurnBackHoax & Clickbait Dataset*) yang berjumlah $\pm 5.000 - 15.000$ baris teks berbahasa Indonesia[cite: 1, 16, 49].<br>**Jenis Data:** Data Teks (*Text*)[cite: 1, 29, 49].<br>**Asumsi Data:** Data diasumsikan *independent and identically distributed* (i.i.d.) antara *training set* (~60%), *validation set* (~20%), dan *test set* (~20%) melalui pengacakan berstratifikasi (*stratified split*, `random_state=42`)[cite: 18, 20, 21, 49]. Seluruh transformasi fitur (`fit_transform`) hanya dipelajari dari *training set* untuk mencegah *data leakage*.] |
 
 ### 3.3 Goals
 
@@ -130,7 +132,11 @@ Tujuan harus spesifik, terukur, dan selaras dengan problem statement.
 
 > Sertakan minimal satu goal yang menunjukkan kontribusi terhadap target SDG yang dipilih (Bab 2.2).
 
-**[Tulis goals Anda di sini]**
+**
+1. Menghasilkan *pipeline* pengolahan data teks berbahasa Indonesia yang bersih, bebas *data leakage*, dan dilengkapi mekanisme penyamaran kata kunci nama tokoh untuk meminimalkan bias *overfitting*[cite: 17, 26, 32, 49].
+2. Membangun, melatih, dan mengukur performa tiga pendekatan model (*Baseline Logistic Regression*, *Advanced Random Forest*, dan *Deep Learning Embedding + Dense/LSTM*) dengan target capaian *Accuracy* dan *F1-Score* $> 80\%$ pada *test set*[cite: 45, 49].
+3. Menentukan model terbaik berdasarkan analisis perbandingan metrik evaluasi (*Accuracy*, *Precision*, *Recall*, *F1-Score*), waktu komputasi pelatihan, dan ketahanan terhadap *overfitting* pada data baru[cite: 15, 18, 41, 49].
+4. Menghasilkan prototipe penyaringan awal (*early screening*) teks provokatif/disinformasi yang *reproducible* di GitHub untuk mendukung **SDG 16 Target 16.10** dalam membantu publik mengakses informasi yang andal tanpa melanggar kebebasan informasi[cite: 1, 49].**
 
 ### 3.4 Solution Approach  **[M]**
 
@@ -144,7 +150,9 @@ Model sederhana sebagai pembanding dasar.
 - Decision Tree
 - Naive Bayes
 
-**[Jelaskan model baseline yang Anda pilih dan alasannya]**
+**Model 1 – Baseline Model**
+- **Model yang Dipilih:** **Logistic Regression** dengan representasi fitur *Bag-of-Words* / TF-IDF[cite: 5, 29, 30, 49].
+- **Alasan Pemilihan:** *Logistic Regression* adalah model linear parametrik yang cepat dilatih, hemat komputasi, dan mudah diinterpretasikan melalui bobot koefisien tiap kata[cite: 39, 44, 45]. Sesuai prinsip perancangan model, memulai dari model linear dengan fitur *Bag-of-Words* (setelah penghapusan *stop words*) memberikan tolok ukur (*baseline*) yang jujur untuk mengetahui seberapa jauh masalah klasifikasi teks ini dapat diselesaikan hanya dengan menghitung frekuensi kemunculan kata[cite: 30, 45, 49].
 
 #### **Model 2 – Advanced / ML Model**
 Model machine learning yang lebih kompleks.
@@ -156,7 +164,9 @@ Model machine learning yang lebih kompleks.
 - Clustering (K-Means, DBSCAN) - untuk unsupervised
 - PCA / dimensionality reduction (untuk preprocessing)
 
-**[Jelaskan model advanced yang Anda pilih dan alasannya]**
+**Model 2 – Advanced / ML Model**
+- **Model yang Dipilih:** **Random Forest Classifier** (Ensemble Pohon Keputusan / *Decision Trees*)[cite: 45, 49].
+- **Alasan Pemilihan:** *Random Forest* memiliki bias induktif bahwa data dapat dipisahkan melalui kombinasi aturan *if-else* bertingkat pada fitur kata[cite: 37, 49]. Berbeda dengan *Logistic Regression* yang terbatas pada batas keputusan garis lurus (linear), *Random Forest* mampu menangkap hubungan non-linear serta interaksi antar-kata kunci (misalnya kombinasi kata sensasional yang muncul bersamaan), sekaligus mengurangi risiko *overfitting* dari satu pohon keputusan tunggal melalui teknik *bagging*[cite: 39, 41, 45, 49].
 
 #### **Model 3 – Deep Learning Model (WAJIB)**
 Model deep learning yang sesuai dengan jenis data.
@@ -197,7 +207,9 @@ Model deep learning yang sesuai dengan jenis data.
 - ❌ Model tidak di-train (hanya define arsitektur)
 - ❌ Tidak ada evaluasi pada test set
 
-**[Jelaskan model deep learning yang Anda pilih dan alasannya]**
+**Model 3 – Deep Learning Model (WAJIB)**
+- **Model yang Dipilih:** **Kategori C (Text Data) – Jaringan Saraf Sederhana dengan *Learned Vector Embeddings* (`Embedding + GlobalAveragePooling1D / LSTM + Dense Layers`)**[cite: 29, 49].
+- **Alasan Pemilihan:** Kelemahan utama *Bag-of-Words* pada Model 1 dan Model 2 adalah panjang vektornya yang sangat besar dan hilangnya makna konteks/urutan kata[cite: 30]. Dengan menggunakan lapisan *Embedding* yang dilanjutkan dengan minimal 2 *hidden layers* (`Dense` dengan aktivasi ReLU dan regularisasi `Dropout`), jaringan saraf mempelajari sendiri representasi vektor padat (*learned embeddings*) yang mewakili kedekatan makna kata[cite: 29, 34, 49]. Arsitektur ini ringan dilatih di Google Colab/Kaggle hingga $\ge 10$ *epochs*, dilengkapi plot *loss* dan *accuracy* per *epoch*, pencatatan waktu pelatihan, serta evaluasi akhir pada *test set*[cite: 1, 49].
 
 ---
 

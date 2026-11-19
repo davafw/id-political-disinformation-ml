@@ -1,4 +1,3 @@
-x
 ## INFORMASI PROYEK
 
 **Judul Proyek:**  
@@ -152,177 +151,109 @@ Tujuan harus spesifik, terukur, dan selaras dengan problem statement.
 ---
 
 ## 4. DATA UNDERSTANDING  **[L]**
+
 ### 4.1 Informasi Dataset
 **Sumber Dataset:**  
-[Sebutkan sumber: Kaggle, UCI ML Repository, atau sumber lain dengan URL]
+Kaggle — *Indonesian Fact and Hoax Political News* (`https://www.kaggle.com/datasets/linkgish/indonesian-fact-and-hoax-political-news`), menggunakan 4 file pada direktori versi *Cleaned* (`dataset_cnn_10k_cleaned.xlsx`, `dataset_kompas_4k_cleaned.xlsx`, `dataset_tempo_6k_cleaned.xlsx`, dan `dataset_turnbackhoax_10_cleaned.xlsx`).
 
 **Deskripsi Dataset:**
-- Jumlah baris (rows): [angka]
-- Jumlah kolom (columns/features): [angka]
-- Tipe data: [Tabular / Image / Text / Time Series / Audio / Video]
-- Ukuran dataset: [MB/GB]
-- Format file: [CSV / JSON / Images / TXT / etc.]
+- **Jumlah baris (rows):** [ISI TOTAL BARIS N DARI SEL 3, misal: 31.353] artikel berita politik
+- **Jumlah kolom (columns/features):** [ISI JUMLAH KOLOM D SETELAH STANDARISASI: 6 kolom (source, title, body, label, raw_text, word_count)]
+- **Tipe data:** Data Teks (*Text*) dengan label klasifikasi biner
+- **Ukuran dataset:** [ISI TOTAL UKURAN MB DARI SEL 2] MB
+- **Format file:** Excel (`.xlsx`) yang digabung menjadi `.csv`
 
 ### 4.2 Deskripsi Fitur
-Jelaskan setiap fitur/kolom yang ada dalam dataset.
-**Contoh tabel:**
+
 | Nama Fitur | Tipe Data | Deskripsi | Contoh Nilai |
 |------------|-----------|-----------|--------------|
-| id | Integer | ID unik data | 1, 2, 3 |
-| age | Integer | Usia (tahun) | 25, 30, 45 |
-| income | Float | Pendapatan (juta) | 5.5, 10.2 |
-| category | Categorical | Kategori produk | A, B, C |
-| text | String | Teks ulasan | "Produk bagus..." |
-| image | Image | Citra 224x224 RGB | Array 224x224x3 |
-| label | Categorical | Label target | 0, 1 atau "positif", "negatif" |
-
-**[Buat tabel deskripsi fitur Anda di sini]**
+| `source` | String / Categorical | Nama portal media sumber artikel | `"cnn_10k"`, `"kompas_4k"`, `"tempo_6k"`, `"turnbackhoax_10"` |
+| `title` | String (Text) | Judul artikel berita atau klaim viral | `"Sidang Gugatan Digelar..."`, `"[SALAH] Bukti Ijazah..."` |
+| `body` | String (Text) | Isi narasi utama berita yang diambil dari kolom teks asli tiap file | `"Komisi Pemilihan Umum menyatakan..."` |
+| `raw_text` | String (Text) | Gabungan fitur `title` dan `body` sebelum pembersihan | `"Sidang Gugatan... Komisi Pemilihan..."` |
+| `word_count` | Integer | Jumlah kata per artikel pada teks mentah (untuk deteksi outlier) | `45`, `210`, `530` |
+| `label` | Integer (Binary Target) | Variabel target (*ground truth*): `0` = Fakta/Berita Jurnalistik Valid, `1` = Hoaks/Disinformasi Provokatif | `0`, `1` |
 
 ### 4.3 Kondisi Data
+Berdasarkan hasil pemeriksaan awal (*data inspection*) pada `notebooks/01_learning_problem_eda.ipynb`:
+- **Missing Values:** Ditemukan sebanyak [ISI ANGKA & PERSEN DARI SEL 4] baris kosong/bernilai `NaN` pada kolom teks/judul.
+- **Duplicate Data:** Ditemukan sebanyak [ISI ANGKA & PERSEN DARI SEL 4] baris artikel dengan isi teks yang identik persis.
+- **Outliers:** Terdapat [ISI ANGKA] artikel yang sangat pendek ($< 5$ kata) yang tidak memiliki cukup konteks kalimat, serta [ISI ANGKA] artikel sangat panjang ($> 1.000$ kata) yang terdeteksi pada distribusi `word_count`.
+- **Imbalanced Data:** Distribusi kelas tidak seimbang (*imbalanced*), dengan proporsi kelas `0` (Fakta dari 3 media arus utama: CNN, Kompas, Tempo) sebesar [ISI % FAKTA]% ([ISI JUMLAH] baris) dan kelas `1` (Hoaks dari TurnBackHoax) sebesar [ISI % HOAKS]% ([ISI JUMLAH] baris), atau sekitar rasio 2:1.
+- **Noise:** Teks masih mengandung tanda baca berlebih, URL, format tag kurung siku (`[SALAH]`, `[PENJELASAN]`), serta kata penanda sumber media seperti `"CNN Indonesia"`, `"Kompas.com"`, dan `"Tempo.co"`.
+- **Data Quality Issues:** Adanya potensi *shortcut learning* jika tag nama media tidak dihapus (model hanya menghafal nama portal berita, bukan gaya bahasanya) serta potensi bias *overfitting* terhadap nama tokoh politik populer.
+- **Asumsi Data (i.i.d., distribusi train-test, potensi data leakage):** Dataset diasumsikan *independent and identically distributed* (i.i.d.) setelah diacak secara berstratifikasi (*stratified split*). Potensi *data leakage* terbesar muncul bila `TfidfVectorizer` atau `Tokenizer` di-*fit* pada keseluruhan dataset sebelum pemisahan; hal ini dimitigasi ketat dengan melakukan `fit_transform` **hanya pada *training set***.
 
-Jelaskan kondisi dan permasalahan data:
+### 4.4 Exploratory Data Analysis (EDA)
 
-- **Missing Values:** [Ada/Tidak, berapa persen?]
-- **Duplicate Data:** [Ada/Tidak, berapa banyak?]
-- **Outliers:** [Ada/Tidak, pada fitur apa?]
-- **Imbalanced Data:** [Ada/Tidak, rasio kelas?]
-- **Noise:** [Jelaskan jika ada]
-- **Data Quality Issues:** [Jelaskan jika ada masalah lain]
-- **Asumsi Data (i.i.d., distribusi train-test, potensi data leakage):** [Jelaskan]
-
-### 4.4 Exploratory Data Analysis (EDA) - (**OPSIONAL**)
-
-**Requirement:** Minimal 3 visualisasi yang bermakna dan insight-nya.
-**Contoh jenis visualisasi yang dapat digunakan:**
-- Histogram (distribusi data)
-- Boxplot (deteksi outliers)
-- Heatmap korelasi (hubungan antar fitur)
-- Bar plot (distribusi kategori)
-- Scatter plot (hubungan 2 variabel)
-- Wordcloud (untuk text data)
-- Sample images (untuk image data)
-- Time series plot (untuk temporal data)
-- Confusion matrix heatmap
-- Class distribution plot
-
-
-#### Visualisasi 1: [Judul Visualisasi]
-[Insert gambar/plot]
+#### Visualisasi 1: Distribusi Kelas Target dan Sumber Media
+![Distribusi Kelas](reports/figures/fig1_class_distribution.png)
 
 **Insight:**  
-[Jelaskan apa yang dapat dipelajari dari visualisasi ini]
+Jumlah artikel kelas `0` (Fakta) secara signifikan lebih besar dibandingkan kelas `1` (Hoaks) karena kelas `0` merupakan gabungan dari tiga portal berita nasional (CNN Indonesia, Kompas, Tempo), sedangkan kelas `1` berasal dari TurnBackHoax. Kondisi *imbalanced* ini mengonfirmasi bahwa evaluasi model tidak boleh hanya mengandalkan *Accuracy*, melainkan wajib memakai *Precision*, *Recall*, dan *F1-Score*, serta memerlukan penanganan bobot kelas (*class weights*) pada data latih.
 
-#### Visualisasi 2: [Judul Visualisasi]
-
-[Insert gambar/plot]
-
-**Insight:**  
-[Jelaskan apa yang dapat dipelajari dari visualisasi ini]
-
-#### Visualisasi 3: [Judul Visualisasi]
-
-[Insert gambar/plot]
+#### Visualisasi 2: Distribusi Jumlah Kata dan Deteksi Outlier
+![Distribusi Panjang Kata](reports/figures/fig2_word_count_distribution.png)
 
 **Insight:**  
-[Jelaskan apa yang dapat dipelajari dari visualisasi ini]
+Distribusi panjang kata cenderung miring ke kanan (*right-skewed*), di mana sebagian besar artikel berada di rentang [ISI RENTANG MEDIAN–Q3 DARI SEL 4] kata. Artikel berita hoaks cenderung memiliki panjang teks yang berbeda dibanding artikel berita arus utama, dan terlihat sejumlah *outlier* berupa teks ekstrem sangat pendek ($< 5$ kata) yang layak dihapus pada tahap *Data Cleaning*, serta menjadi dasar penentuan panjang *padding* (`maxlen=150`) untuk model *Neural Network*.
+
+#### Visualisasi 3: WordCloud Teks Mentah Kelas Fakta vs Hoaks
+![WordCloud Teks Mentah](reports/figures/fig3_wordcloud_raw.png)
+
+**Insight:**  
+Pada teks mentah sebelum dibersihkan, kata-kata seperti nama media/kota (`jakarta`, `cnn`, `kompas`, `tempo`) dan format periksa fakta (`salah`, `penjelasan`, `narasi`) serta nama tokoh politik mendominasi tampilan *WordCloud*. Temuan ini sangat penting: jika dibiarkan, model akan mengalami *overfitting* dengan menghafal nama portal atau nama tokoh, bukan pola kalimat provokatifnya. Oleh sebab itu, kata-kata penanda media wajib dibuang dan nama tokoh disamarkan pada tahap *Data Preparation*.
 
 ---
 
 ## 5. DATA PREPARATION  **[L]**
 
-Bagian ini menjelaskan **semua** proses transformasi dan preprocessing data yang dilakukan.
 ### 5.1 Data Cleaning
-**Aktivitas:**
-- Handling missing values
-- Removing duplicates
-- Handling outliers
-- Data type conversion
-**Contoh:**
-```
-Missing Values:
-- Fitur 'age' memiliki 50 missing values (5% dari data)
-- Strategi: Imputasi dengan median karena distribusi skewed
-- Alasan: Median lebih robust terhadap outliers dibanding mean
-```
-
-**[Jelaskan langkah-langkah data cleaning yang Anda lakukan]**
+Langkah pembersihan data pada `notebooks/02_data_preparation.ipynb`:
+1. **Penghapusan *Missing Values*:** Membuang [ISI ANGKA DARI SEL 2] baris yang memiliki teks/label kosong agar tidak menyebabkan error saat transformasi vektor.
+2. **Penghapusan Duplikat:** Menghapus [ISI ANGKA] artikel duplikat persis sebelum *splitting* agar artikel yang sama tidak muncul sekaligus di *train set* dan *test set* (mencegah *data leakage*).
+3. **Penghapusan *Noise* & Tag Identitas Media:** Menghapus URL, tag HTML, angka, tanda baca, tag kurung siku (`[SALAH]`, `[HOAKS]`), serta kata penanda portal berita (`cnn indonesia`, `kompas`, `tempo`, `turnbackhoax`, `mafindo`, `jakarta`, `baca juga`).
+4. **Penanganan *Outlier* Teks Pendek:** Menghapus [ISI ANGKA] baris yang menyisakan $< 5$ kata setelah pembersihan karena terlalu minim informasi linguistik, sehingga menyisakan **[ISI TOTAL DATA BERSIH]** baris siap latih.
 
 ### 5.2 Feature Engineering
-**Aktivitas:**
-- Creating new features
-- Feature extraction
-- Feature selection
-- Dimensionality reduction
-
-**[Jelaskan feature engineering yang Anda lakukan]**
+1. **Penggabungan Judul dan Narasi (`raw_text`):** Menggabungkan kolom `title` dan `body` karena pola *clickbait*/provokatif paling kuat muncul di judul, sementara konteks kalimat berada di isi berita.
+2. **Penyamaran Entitas Tokoh Politik (*Entity Masking*):** Menyamarkan nama-nama tokoh dan partai/instansi politik yang sering muncul (seperti `jokowi`, `prabowo`, `anies`, `ganjar`, `roy suryo`, `ugm`) menjadi token netral `tokohpublik`. Tujuannya adalah memaksa model mempelajari **pola struktur kalimat provokatif**, bukan menghafal nama tokoh tertentu (mitigasi risiko etika Bab 2.2).
+3. **Ekstraksi Fitur N-Gram (Unigram & Bigram):** Pada TF-IDF digunakan `ngram_range=(1, 2)` untuk menangkap frasa dua kata yang bermakna (misalnya `"bukti palsu"`, `"viral beredar"`).
 
 ### 5.3 Data Transformation
-
-**Untuk Data Tabular:**
-- Encoding (Label Encoding, One-Hot Encoding, Ordinal Encoding)
-- Scaling (Standardization, Normalization, MinMaxScaler)
-
-**Untuk Data Text:**
-- Tokenization
-- Lowercasing
-- Removing punctuation/stopwords
-- Stemming/Lemmatization
-- Padding sequences
-- Word embedding (Word2Vec, GloVe, fastText)
-
-**Untuk Data Image:**
-- Resizing
-- Normalization (pixel values 0-1 atau -1 to 1)
-- Data augmentation (rotation, flip, zoom, brightness, etc.)
-- Color space conversion
-
-**Untuk Time Series:**
-- Creating time windows
-- Lag features
-- Rolling statistics
-- Differencing
-
-**[Jelaskan transformasi yang Anda lakukan]**
+Karena data bertipe teks, dilakukan transformasi menjadi representasi vektor angka yang berbeda sesuai kebutuhan keluarga model:
+1. **Normalisasi Teks:** *Lowercasing* (menyeragamkan huruf kecil) dan penghapusan *stop words* Bahasa Indonesia (kata umum tidak informatif seperti *"yang"*, *"di"*, *"dan"*, *"adalah"*) menggunakan daftar *stopwords* NLTK Bahasa Indonesia.
+2. **TF-IDF Vectorization (Untuk Model 1 Logistic Regression & Model 2 SVM):** Mengubah teks menjadi matriks bobot frekuensi kata berdimensi `10.000` fitur (`max_features=10000`, `min_df=3`). **`fit_transform` hanya dijalankan pada `X_train`**, sementara `X_val` dan `X_test` hanya dikenakan `transform`.
+3. **Tokenization & Sequence Padding (Untuk Model 3 Neural Network):** Mengubah teks menjadi barisan indeks bilangan bulat (`VOCAB_SIZE = 10000`, `oov_token="<OOV>"`) dan menyamakan panjang seluruh input menjadi `MAX_LEN = 150` token dengan *post-padding* agar dapat diproses oleh *Embedding Layer*. **`fit_on_texts` hanya dijalankan pada `X_train`**.
 
 ### 5.4 Data Splitting
+Data diacak dan dibagi menggunakan **Stratified Split** (`random_state=42`) untuk menjaga rasio kelas Fakta (`0`) dan Hoaks (`1`) tetap identik pada setiap bagian:
 
-**Strategi pembagian data:**
-```
-- Training set: [X]% ([jumlah] samples)
-- Validation set: [X]% ([jumlah] samples) - jika ada
-- Test set: [X]% ([jumlah] samples)
-```
-**Contoh:**
-```
-Menggunakan stratified split untuk mempertahankan distribusi kelas:
-- Training: 80% (8000 samples)
-- Test: 20% (2000 samples)
-- Random state: 42 untuk reproducibility
+```text
+- Training set   : 60% ([ISI JUMLAH] samples — Fakta: [ISI], Hoaks: [ISI])
+- Validation set : 20% ([ISI JUMLAH] samples — Fakta: [ISI], Hoaks: [ISI])
+- Test set       : 20% ([ISI JUMLAH] samples — Fakta: [ISI], Hoaks: [ISI])
 ```
 
-> **Penting:** Test set hanya digunakan **sekali** pada tahap P (evaluasi akhir). Tuning pada tahap O hanya boleh memakai validation set / cross-validation. Fit scaler/encoder hanya pada data training untuk menghindari data leakage.
+* **Alasan:** Pembagian 60/20/20 memisahkan peran data latih (mencari parameter), data validasi (menyetel *hyperparameter* dan mendiagnosis *overfitting* pada Minggu 3–5), dan data uji (*test set* yang disimpan terpisah di `data/processed/` dan **hanya dipakai satu kali** pada evaluasi akhir Minggu 6).
 
-**[Jelaskan strategi splitting Anda dan alasannya]**
+### 5.5 Data Balancing
+Karena distribusi kelas pada data latih bersifat tidak seimbang (rasio Fakta : Hoaks $\approx 2:1$), diterapkan teknik **Class Weights (`balanced`)** yang dihitung **hanya dari distribusi label data latih (`y_train`)** menggunakan `compute_class_weight`:
+- Bobot Kelas `0` (Fakta): `[ISI BOBOT KELAS 0 DARI SEL 4]`
+- Bobot Kelas `1` (Hoaks): `[ISI BOBOT KELAS 1 DARI SEL 4]`
 
-### 5.5 Data Balancing (jika diperlukan)
-**Teknik yang digunakan:**
-- SMOTE (Synthetic Minority Over-sampling Technique)
-- Random Undersampling
-- Class weights
-- Ensemble sampling
+**Alasan:** Penggunaan *class weights* pada tahap pelatihan (tanpa mengubah distribusi *validation set* maupun *test set*) memberikan penalti kerugian (*loss*) yang lebih besar jika model salah memprediksi kelas minoritas (Hoaks), tanpa harus membuang data berita fakta yang berharga (*undersampling*) maupun menciptakan duplikasi teks buatan (*oversampling*).
 
-**[Jelaskan jika Anda melakukan data balancing]**
+### 5.6 Ringkasan Data Preparation (Apa – Mengapa – Bagaimana)
 
-### 5.6 Ringkasan Data Preparation
-
-**Per langkah, jelaskan:**
-1. **Apa** yang dilakukan
-**[Jelaskan ]**
-2. **Mengapa** penting
-**[Jelaskan Mengapa ?]**
-3. **Bagaimana** implementasinya
-**[Jelaskan Bagaimana]**
-
+| Tahap | Apa yang Dilakukan | Mengapa Penting | Bagaimana Implementasinya |
+| :--- | :--- | :--- | :--- |
+| **1. Data Cleaning** | Menghapus *missing values*, duplikat, URL, angka, tanda baca, tag media (`CNN`, `Kompas`, `Tempo`, `[SALAH]`), dan teks $< 5$ kata. | Mencegah *shortcut learning* (model menghafal nama portal berita) dan mencegah duplikasi teks bocor ke *test set*. | `dropna()`, `drop_duplicates()`, dan fungsi `re.sub()` berbasis *regular expression* di Python. |
+| **2. Entity Masking** | Menyamarkan nama tokoh dan instansi politik populer menjadi token `tokohpublik`. | Mencegah *keyword overfitting* terhadap figur politik tertentu sesuai prinsip etika (Bab 2.2). | Substitusi pola *regex* pada daftar entitas politik sebelum tokenisasi. |
+| **3. Stopword Removal** | Membuang kata hubung/umum Bahasa Indonesia dan kata $\le 2$ karakter. | Memperkecil ukuran kosakata dan membuang derau kata yang muncul merata di kedua kelas. | Filtrasi token menggunakan `nltk.corpus.stopwords.words('indonesian')`. |
+| **4. Stratified Splitting** | Membagi dataset bersih menjadi 60% Train, 20% Val, dan 20% Test dengan `random_state=42`. | Mengukur kemampuan generalisasi secara jujur dengan proporsi kelas seragam dan hasil yang *reproducible*. | Dua kali pemanggilan `train_test_split(..., stratify=y, random_state=42)`. |
+| **5. Feature Transformation** | Mengubah teks menjadi vektor TF-IDF (Model 1 & 2) dan *padded sequences* (Model 3). | Model ML/DL hanya memproses angka; memisahkan `fit` dan `transform` mencegah *data leakage*. | `TfidfVectorizer.fit_transform(X_train)` + `.transform(X_val/X_test)`; `Tokenizer.fit_on_texts(X_train)` + `pad_sequences(maxlen=150)`. |
+| **6. Data Balancing** | Menghitung bobot penalti kelas (*class weights*) khusus dari `y_train`. | Mengatasi ketimpangan kelas (~2:1) agar *Recall* kelas Hoaks tidak rendah, tanpa mencemari distribusi *val/test*. | `compute_class_weight('balanced', y=y_train)` disimpan ke `class_weights.json`. |
 ---
 
 ## 6. MODELING  **[M + O]**

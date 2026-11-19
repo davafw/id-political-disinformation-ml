@@ -1,4 +1,4 @@
-
+x
 ## INFORMASI PROYEK
 
 **Judul Proyek:**  
@@ -91,7 +91,7 @@ Ide proyek **berasal dari mahasiswa** dan harus selaras dengan **salah satu** da
 
 ### 2.3 Ringkasan Alur Lifecycle Proyek
 
-**Pada tahap **L**, kami merumuskan masalah sebagai klasifikasi biner teks (0 = berita jurnalistik informatif, 1 = provokatif/disinformasi) menggunakan dataset berlabel dari Kaggle, lalu membersihkan dan membagi data tanpa kebocoran informasi ke test set. Pada tahap **M**, kami merancang tiga model: Logistic Regression dengan Bag-of-Words sebagai baseline, Decision Tree/Random Forest sebagai model advanced, dan jaringan saraf sederhana dengan learned embeddings sebagai model deep learning. Pada tahap **O**, model dilatih dengan loss cross-entropy, dilakukan tuning hyperparameter, dan dikontrol overfitting-nya dengan regularisasi serta early stopping. Pada tahap **P**, ketiga model dievaluasi pada test set menggunakan accuracy, precision, dan recall, lalu dibandingkan. Iterasi yang direncanakan: jika hasil evaluasi menunjukkan model terlalu bergantung pada nama tokoh (bukan pola bahasa provokatif), kami kembali ke tahap L dan M untuk menyamarkan nama tokoh pada teks dan menyesuaikan fitur, lalu melatih ulang dan membandingkan metriknya.**
+Pada tahap **L**, kami merumuskan masalah sebagai klasifikasi biner teks (`0` = berita jurnalistik informatif dari CNN Indonesia, Kompas, dan Tempo; `1` = teks provokatif/disinformasi dari TurnBackHoax) menggunakan dataset berlabel dari Kaggle, lalu membersihkan teks dan membagi data menjadi *train* (60%), *validation* (20%), dan *test* (20%) tanpa kebocoran informasi (*data leakage*). Pada tahap **M**, kami merancang tiga model bertahap: *Logistic Regression* dengan *Bag-of-Words*/TF-IDF sebagai *baseline*, *Support Vector Machine (SVM)* sebagai model *advanced*, dan *Neural Network* sederhana (*Embedding + 2 Dense Hidden Layers*) sebagai model *deep learning*. Pada tahap **O**, model dilatih dengan fungsi kerugian *binary cross-entropy*, penyetelan *hyperparameter*, serta kontrol *overfitting* menggunakan regularisasi dan *early stopping*. Pada tahap **P**, ketiga model dievaluasi satu kali pada *test set* menggunakan *accuracy, precision, recall,* dan *F1-score*, dengan rencana iterasi kembali ke tahap **L** dan **O** jika ditemukan ketergantungan berlebih pada kata kunci tertentu.
 
 ---
 
@@ -138,77 +138,17 @@ Tujuan harus spesifik, terukur, dan selaras dengan problem statement.
 
 ### 3.4 Solution Approach  **[M]**
 
-Mahasiswa **WAJIB** menggunakan minimal **tiga model** dengan komposisi sebagai berikut:
 #### **Model 1 – Baseline Model**
-Model sederhana sebagai pembanding dasar.
-**Pilihan model:**
-- Linear Regression (untuk regresi)
-- Logistic Regression (untuk klasifikasi)
-- K-Nearest Neighbors (KNN)
-- Decision Tree
-- Naive Bayes
-
-**Model 1 – Baseline Model**
-- **Model yang Dipilih:** **Logistic Regression** dengan representasi fitur *Bag-of-Words* / TF-IDF[cite: 5, 29, 30, 49].
-- **Alasan Pemilihan:** *Logistic Regression* adalah model linear parametrik yang cepat dilatih, hemat komputasi, dan mudah diinterpretasikan melalui bobot koefisien tiap kata[cite: 39, 44, 45]. Sesuai prinsip perancangan model, memulai dari model linear dengan fitur *Bag-of-Words* (setelah penghapusan *stop words*) memberikan tolok ukur (*baseline*) yang jujur untuk mengetahui seberapa jauh masalah klasifikasi teks ini dapat diselesaikan hanya dengan menghitung frekuensi kemunculan kata[cite: 30, 45, 49].
+- **Model yang Dipilih:** **Logistic Regression** dengan representasi fitur *Bag-of-Words* / TF-IDF.
+- **Alasan Pemilihan:** *Logistic Regression* merupakan model linear parametrik yang cepat dilatih, hemat data, dan mudah ditafsirkan melalui bobot koefisien tiap kata. Model ini berfungsi sebagai tolok ukur (*baseline*) yang jujur sebelum kompleksitas dinaikkan.
 
 #### **Model 2 – Advanced / ML Model**
-Model machine learning yang lebih kompleks.
-**Pilihan model:**
-- Random Forest
-- Gradient Boosting (XGBoost, LightGBM, CatBoost)
-- Support Vector Machine (SVM)
-- Ensemble methods
-- Clustering (K-Means, DBSCAN) - untuk unsupervised
-- PCA / dimensionality reduction (untuk preprocessing)
+- **Model yang Dipilih:** **Support Vector Machine (SVM)**.
+- **Alasan Pemilihan:** Berbeda dengan *Logistic Regression*, SVM mencari bidang pembatas keputusan (*decision boundary*) dengan jarak (*margin*) paling optimal di antara kelas teks valid (`0`) dan hoaks (`1`). SVM sangat tangguh untuk fitur teks berdimensi tinggi dan mampu membentuk batas keputusan non-linear melalui penggunaan *kernel*.
 
-**Model 2 – Advanced / ML Model**
-- **Model yang Dipilih:** **Random Forest Classifier** (Ensemble Pohon Keputusan / *Decision Trees*)[cite: 45, 49].
-- **Alasan Pemilihan:** *Random Forest* memiliki bias induktif bahwa data dapat dipisahkan melalui kombinasi aturan *if-else* bertingkat pada fitur kata[cite: 37, 49]. Berbeda dengan *Logistic Regression* yang terbatas pada batas keputusan garis lurus (linear), *Random Forest* mampu menangkap hubungan non-linear serta interaksi antar-kata kunci (misalnya kombinasi kata sensasional yang muncul bersamaan), sekaligus mengurangi risiko *overfitting* dari satu pohon keputusan tunggal melalui teknik *bagging*[cite: 39, 41, 45, 49].
-
-#### **Model 3 – Deep Learning Model (WAJIB)**
-Model deep learning yang sesuai dengan jenis data.
-**Pilihan Implementasi (pilih salah satu sesuai dataset):**
-**A. Tabular Data:**
-- Multilayer Perceptron (MLP) / Neural Network
-- Minimum: 2 hidden layers
-- Contoh: prediksi harga, klasifikasi binary/multiclass
-
-**B. Image Data:**
-- CNN sederhana (minimum 2 convolutional layers) **ATAU**
-- Transfer Learning (ResNet, VGG, MobileNet, EfficientNet) - **recommended**
-- Contoh: klasifikasi gambar, object detection
-
-**C. Text Data:**
-- LSTM/GRU (minimum 1 layer) **ATAU**
-- Embedding + Dense layers **ATAU**
-- Pre-trained model (BERT, DistilBERT, Word2Vec)
-- Contoh: sentiment analysis, text classification
-
-**D. Time Series:**
-- LSTM/GRU untuk sequential prediction
-- Contoh: forecasting, anomaly detection
-
-**E. Recommender Systems:**
-- Neural Collaborative Filtering (NCF)
-- Autoencoder-based Collaborative Filtering
-- Deep Matrix Factorization
-
-**Minimum Requirements untuk Deep Learning:**
-- ✅ Model harus training minimal 10 epochs
-- ✅ Harus ada plot loss dan accuracy/metric per epoch
-- ✅ Harus ada hasil prediksi pada test set
-- ✅ Training time dicatat (untuk dokumentasi)
-
-**Tidak Diperbolehkan:**
-- ❌ Copy-paste kode tanpa pemahaman
-- ❌ Model tidak di-train (hanya define arsitektur)
-- ❌ Tidak ada evaluasi pada test set
-
-**Model 3 – Deep Learning Model (WAJIB)**
-- **Model yang Dipilih:** **Kategori C (Text Data) – Jaringan Saraf Sederhana dengan *Learned Vector Embeddings* (`Embedding + GlobalAveragePooling1D / LSTM + Dense Layers`)**[cite: 29, 49].
-- **Alasan Pemilihan:** Kelemahan utama *Bag-of-Words* pada Model 1 dan Model 2 adalah panjang vektornya yang sangat besar dan hilangnya makna konteks/urutan kata[cite: 30]. Dengan menggunakan lapisan *Embedding* yang dilanjutkan dengan minimal 2 *hidden layers* (`Dense` dengan aktivasi ReLU dan regularisasi `Dropout`), jaringan saraf mempelajari sendiri representasi vektor padat (*learned embeddings*) yang mewakili kedekatan makna kata[cite: 29, 34, 49]. Arsitektur ini ringan dilatih di Google Colab/Kaggle hingga $\ge 10$ *epochs*, dilengkapi plot *loss* dan *accuracy* per *epoch*, pencatatan waktu pelatihan, serta evaluasi akhir pada *test set*[cite: 1, 49].
-
+#### **Model 3 – Deep Learning Model**
+- **Model yang Dipilih:** **Kategori C (Text Data) – Neural Network Sederhana (`Embedding + GlobalAveragePooling1D + 2 Dense Hidden Layers + Dropout`)**.
+- **Alasan Pemilihan:** Menggunakan konsep dasar *Neural Network* yang dipelajari di perkuliahan, arsitektur ini menggabungkan lapisan *Embedding* (*learned vector embeddings*) dengan dua *hidden layers* (`Dense` beraktivasi ReLU) dan regularisasi `Dropout` untuk mencegah *overfitting*. Model dilatih minimal 10 *epochs* lengkap dengan pencatatan waktu *training*, kurva *loss* dan *accuracy* per *epoch*, serta evaluasi akhir pada *test set*.
 ---
 
 ## 4. DATA UNDERSTANDING  **[L]**
